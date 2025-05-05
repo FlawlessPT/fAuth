@@ -6,6 +6,9 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import pt.flawless.fAuth.commands.LoginCommand;
 import pt.flawless.fAuth.commands.RegisterCommand;
+import pt.flawless.fAuth.listeners.PlayerMoveListener;
+import pt.flawless.fAuth.listeners.PlayerQuitListener;
+import pt.flawless.fAuth.listeners.PlayerSpawnListener;
 
 public class Main extends JavaPlugin {
     public static Plugin plugin;
@@ -16,6 +19,9 @@ public class Main extends JavaPlugin {
     }
 
     private void registerEvents() {
+        Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerSpawnListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
     }
 
     @Override
