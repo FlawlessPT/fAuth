@@ -1,9 +1,0 @@
-name: fAuth
-main: pt.flawless.fAuth.Main
-description: Server auth
-version: 1.0
-commands:
-  login:
-    description: Login into a player's account
-  register:
-    description: Register a player's account
