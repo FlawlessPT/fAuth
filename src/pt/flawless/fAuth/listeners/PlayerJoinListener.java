@@ -13,13 +13,15 @@ import java.sql.SQLException;
 public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
+        e.setJoinMessage(e.getPlayer().getName() + " joined!");
+
         try {
             Boolean isRegistered = Main.database.isRegistered(e.getPlayer().getUniqueId());
 
             if (isRegistered) {
-                e.getPlayer().sendMessage("\n§cPara prosseguir, efetua login:\n§c/login [password]\n");
+                e.getPlayer().sendMessage("\n§cPara prosseguir, efetua login:\n§c/login [password]\n\n§c ");
             } else {
-                e.getPlayer().sendMessage("\n§cPara prosseguir, regista-te:\n§c/login [password]\n");
+                e.getPlayer().sendMessage("\n§cPara prosseguir, regista-te:\n§c/login [password]\n\n§c ");
             }
         } catch (SQLException ex) {
             e.getPlayer().kickPlayer("§cErro ao validar o estado do teu login.");
