@@ -7,9 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pt.flawless.fAuth.commands.LoginCommand;
 import pt.flawless.fAuth.commands.RegisterCommand;
 import pt.flawless.fAuth.database.AuthDatabase;
-import pt.flawless.fAuth.listeners.PlayerMoveListener;
-import pt.flawless.fAuth.listeners.PlayerQuitListener;
-import pt.flawless.fAuth.listeners.PlayerSpawnListener;
+import pt.flawless.fAuth.listeners.*;
 
 import java.sql.SQLException;
 
@@ -43,6 +41,8 @@ public class Main extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSpawnListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
     }
 
     @Override

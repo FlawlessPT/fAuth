@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 
+// TODO: Move this file to centralized place
 public class PlayerSpawnListener implements Listener {
     @EventHandler
     public void onPlayerSpawnEvent(PlayerSpawnLocationEvent playerSpawnListener) {

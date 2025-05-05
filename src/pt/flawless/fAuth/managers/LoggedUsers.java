@@ -22,6 +22,10 @@ public class LoggedUsers {
         return this;
     }
 
+    public boolean isLoggedIn(UUID uuid) {
+        return loggedInPlayers.contains(uuid);
+    }
+
     public void clearLoggedUsers() {
         this.loggedInPlayers.clear();
     }
