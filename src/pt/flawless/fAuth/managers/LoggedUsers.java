@@ -1,7 +1,5 @@
 package pt.flawless.fAuth.managers;
 
-import com.mysql.jdbc.log.Log;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -14,7 +12,7 @@ public class LoggedUsers {
         return this.loggedInPlayers;
     }
 
-    public LoggedUsers addLoggerUser(UUID userPlayer) {
+    public LoggedUsers addLoggedUser(UUID userPlayer) {
         loggedInPlayers.add(userPlayer);
         return this;
     }

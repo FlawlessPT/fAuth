@@ -10,7 +10,7 @@ import org.spigotmc.event.player.PlayerSpawnLocationEvent;
 public class PlayerSpawnListener implements Listener {
     @EventHandler
     public void onPlayerSpawnEvent(PlayerSpawnLocationEvent playerSpawnListener) {
-        playerSpawnListener.setSpawnLocation(new Location(Bukkit.getServer().getWorld("world"), 137, 70, -46));
+        playerSpawnListener.setSpawnLocation(new Location(Bukkit.getServer().getWorld("world"), 137.517, 70, -46.536));
         // show message on join
     }
 }
