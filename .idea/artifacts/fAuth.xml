@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="fAuth">
+    <output-path>$PROJECT_DIR$/../plugin-tests/plugins</output-path>
+    <root id="archive" name="fAuth.jar">
+      <element id="module-output" name="fAuth" />
+    </root>
+  </artifact>
+</component>
