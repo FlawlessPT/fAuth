@@ -40,10 +40,10 @@ public class Main extends JavaPlugin {
 
     private void registerEvents() {
         Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerSpawnListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerAuthListener(), this);
     }
 
     @Override

@@ -1,12 +1,12 @@
 package pt.flawless.fAuth.commands;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pt.flawless.fAuth.Main;
+import pt.flawless.fAuth.events.PlayerAuthEvent.PlayerAuthEventImpl;
 import pt.flawless.fAuth.listeners.PlayerJoinListener;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
 import pt.flawless.fapi.actionbar.FActionBar;
@@ -45,6 +45,7 @@ public class LoginCommand implements CommandExecutor {
                     if (PlayerJoinListener.titleAlert != null) PlayerJoinListener.titleAlert.clear();
                     Bukkit.getConsoleSender().sendMessage("[fAuth] %username% just logged in.".replace("%username%", player.getName()));
                     FSound.success(player);
+                    PlayerAuthEventImpl.callPlayerAuthEvent(player);
                 } else {
                     actionBar.setMessage("§cPassword errada.").send();
                     FSound.fail(player);

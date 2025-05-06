@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pt.flawless.fAuth.Main;
+import pt.flawless.fAuth.events.PlayerAuthEvent.PlayerAuthEventImpl;
 import pt.flawless.fAuth.listeners.PlayerJoinListener;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
 import pt.flawless.fapi.actionbar.FActionBar;
@@ -48,6 +49,7 @@ public class RegisterCommand implements CommandExecutor {
                 actionBar.setMessage("§eRegistado com sucesso!").send();
                 Bukkit.getConsoleSender().sendMessage("[fAuth] Registered user %username%.".replace("%username%", player.getName()));
                 FSound.success(player);
+                PlayerAuthEventImpl.callPlayerAuthEvent(player);
             } catch (SQLException e) {
                 player.kickPlayer("§cErro ao efetuar registo. Tenta novamente!");
                 FSound.fail(player);

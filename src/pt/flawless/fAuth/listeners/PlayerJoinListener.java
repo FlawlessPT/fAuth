@@ -18,9 +18,7 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-
-        e.setJoinMessage(player.getName() + " joined!");
-
+        
         try {
             Boolean isRegistered = Main.database.isRegistered(player.getUniqueId());
 
