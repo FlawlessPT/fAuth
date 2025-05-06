@@ -5,5 +5,9 @@ version: 1.0
 commands:
   login:
     description: Login into a player's account
+    aliases:
+      - logar
   register:
     description: Register a player's account
+    aliases:
+      - registar

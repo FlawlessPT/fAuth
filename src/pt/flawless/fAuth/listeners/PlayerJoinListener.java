@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import pt.flawless.fAuth.Main;
+import pt.flawless.fAuth.database.AuthDatabaseImpl;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
 import pt.flawless.fapi.title.FTitle;
 
@@ -20,7 +21,7 @@ public class PlayerJoinListener implements Listener {
         Player player = e.getPlayer();
         
         try {
-            Boolean isRegistered = Main.database.isRegistered(player.getUniqueId());
+            Boolean isRegistered = AuthDatabaseImpl.database.isRegistered(player.getUniqueId());
 
             titleAlert = new FTitle().setPlayer(player).setTime(999);
             String message;

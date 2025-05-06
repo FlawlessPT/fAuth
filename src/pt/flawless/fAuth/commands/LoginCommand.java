@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pt.flawless.fAuth.Main;
+import pt.flawless.fAuth.database.AuthDatabaseImpl;
 import pt.flawless.fAuth.events.PlayerAuthEvent.PlayerAuthEventImpl;
 import pt.flawless.fAuth.listeners.PlayerJoinListener;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
@@ -36,7 +37,7 @@ public class LoginCommand implements CommandExecutor {
 
             try {
                 String password = args[0];
-                Boolean isCorrectPassword = Main.database.verifyPassword(player.getUniqueId(), password);
+                Boolean isCorrectPassword = AuthDatabaseImpl.database.verifyPassword(player.getUniqueId(), password);
 
                 if (isCorrectPassword) {
                     LoggedUsersImpl.loggedUsers.addLoggedUser(player.getUniqueId());

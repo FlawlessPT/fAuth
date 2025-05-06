@@ -6,6 +6,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pt.flawless.fAuth.Main;
+import pt.flawless.fAuth.database.AuthDatabaseImpl;
 import pt.flawless.fAuth.events.PlayerAuthEvent.PlayerAuthEventImpl;
 import pt.flawless.fAuth.listeners.PlayerJoinListener;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
@@ -36,13 +37,13 @@ public class RegisterCommand implements CommandExecutor {
             }
 
             try {
-                if (Main.database.isRegistered(player.getUniqueId())) {
+                if (AuthDatabaseImpl.database.isRegistered(player.getUniqueId())) {
                     actionBar.setMessage("§cUtilizador já registado!").send();
                     FSound.fail(player);
                     return false;
                 }
 
-                Main.database.registerUser(player.getUniqueId(), player.getName(), confirmPassword);
+                AuthDatabaseImpl.database.registerUser(player.getUniqueId(), player.getName(), confirmPassword);
 
                 LoggedUsersImpl.loggedUsers.addLoggedUser(player.getUniqueId());
                 if (PlayerJoinListener.titleAlert != null) PlayerJoinListener.titleAlert.clear();
