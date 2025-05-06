@@ -7,7 +7,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pt.flawless.fAuth.Main;
+import pt.flawless.fAuth.listeners.PlayerJoinListener;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
+import pt.flawless.fapi.actionbar.FActionBar;
 import pt.flawless.fapi.sounds.FSound;
 
 import java.sql.SQLException;
@@ -23,9 +25,13 @@ public class LoginCommand implements CommandExecutor {
         }
 
         if (args.length == 1) {
+            FActionBar actionBar = new FActionBar(player);
+
             if (LoggedUsersImpl.loggedUsers.getLoggedInPlayers().contains(player.getUniqueId())) {
-                player.sendMessage("§cJá te encontras logado!");
+                actionBar.setMessage("§cJá te encontras logado!").send();
                 FSound.fail(player);
+
+                return false;
             }
 
             try {
@@ -35,16 +41,17 @@ public class LoginCommand implements CommandExecutor {
                 if (isCorrectPassword) {
                     LoggedUsersImpl.loggedUsers.addLoggedUser(player.getUniqueId());
 
-                    player.sendMessage("§eLogado com sucesso!");
+                    actionBar.setMessage("§eLogado com sucesso!").send();
+                    if (PlayerJoinListener.titleAlert != null) PlayerJoinListener.titleAlert.clear();
                     Bukkit.getConsoleSender().sendMessage("[fAuth] %username% just logged in.".replace("%username%", player.getName()));
                     FSound.success(player);
                 } else {
-                    player.sendMessage("§cPassword errada.");
-                    FSound.sendSound(player, Sound.ANVIL_BREAK);
+                    actionBar.setMessage("§cPassword errada.").send();
+                    FSound.fail(player);
                 }
             } catch (SQLException e) {
-                player.sendMessage("§cErro ao efetuar registo.");
                 FSound.fail(player);
+                player.kickPlayer("§cErro ao efetuar login. Tenta novamente!");
             }
         }
         return false;

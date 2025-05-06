@@ -6,7 +6,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import pt.flawless.fAuth.Main;
+import pt.flawless.fAuth.listeners.PlayerJoinListener;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
+import pt.flawless.fapi.actionbar.FActionBar;
 import pt.flawless.fapi.sounds.FSound;
 
 import java.sql.SQLException;
@@ -22,18 +24,19 @@ public class RegisterCommand implements CommandExecutor {
         }
 
         if (args.length == 2) {
+            FActionBar actionBar = new FActionBar(player);
             String password = args[0];
             String confirmPassword = args[1];
 
             if (!password.equalsIgnoreCase(confirmPassword)) {
-                player.sendMessage("§cAs passwords devem corresponder!");
+                actionBar.setMessage("§cAs passwords devem corresponder!").send();
                 FSound.fail(player);
                 return false;
             }
 
             try {
                 if (Main.database.isRegistered(player.getUniqueId())) {
-                    player.sendMessage("§cUtilizador já registado!");
+                    actionBar.setMessage("§cUtilizador já registado!").send();
                     FSound.fail(player);
                     return false;
                 }
@@ -41,12 +44,12 @@ public class RegisterCommand implements CommandExecutor {
                 Main.database.registerUser(player.getUniqueId(), player.getName(), confirmPassword);
 
                 LoggedUsersImpl.loggedUsers.addLoggedUser(player.getUniqueId());
-
-                player.sendMessage("§eRegistado com sucesso!");
+                if (PlayerJoinListener.titleAlert != null) PlayerJoinListener.titleAlert.clear();
+                actionBar.setMessage("§eRegistado com sucesso!").send();
                 Bukkit.getConsoleSender().sendMessage("[fAuth] Registered user %username%.".replace("%username%", player.getName()));
                 FSound.success(player);
             } catch (SQLException e) {
-                player.sendMessage("§cErro ao efetuar registo.");
+                player.kickPlayer("§cErro ao efetuar registo. Tenta novamente!");
                 FSound.fail(player);
             }
         }

@@ -8,6 +8,7 @@ import pt.flawless.fAuth.commands.LoginCommand;
 import pt.flawless.fAuth.commands.RegisterCommand;
 import pt.flawless.fAuth.database.AuthDatabase;
 import pt.flawless.fAuth.listeners.*;
+import pt.flawless.fAuth.managers.LoggedUsersImpl;
 
 import java.sql.SQLException;
 
@@ -66,10 +67,11 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        LoggedUsersImpl.loggedUsers.clearLoggedUsers();
+
         ConsoleCommandSender b = Bukkit.getConsoleSender();
         b.sendMessage("§c");
         b.sendMessage("§c[fAuth] Plugin desativado com sucesso!");
         b.sendMessage("§c");
-
     }
 }

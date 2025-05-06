@@ -6,7 +6,7 @@ import java.util.UUID;
 
 // TODO: Move this file to centralized place
 public class LoggedUsers {
-    public final Set<UUID> loggedInPlayers = new HashSet<>();
+    private Set<UUID> loggedInPlayers = new HashSet<>();
 
     public Set<UUID> getLoggedInPlayers() {
         return this.loggedInPlayers;

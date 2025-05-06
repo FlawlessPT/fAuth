@@ -5,7 +5,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
 
-// TODO: Move this file to centralized place
 public class PlayerMoveListener implements Listener {
     @EventHandler
     public void onPlayerMoveEvent(PlayerMoveEvent e) {
