@@ -1,6 +1,6 @@
 package pt.flawless.fAuth.database;
 
-import pt.flawless.fAuth.database.bcrypt.BCrypt;
+import pt.flawless.fapi.database.bcrypt.BCrypt;
 
 import java.io.File;
 import java.sql.*;

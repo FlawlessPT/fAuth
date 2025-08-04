@@ -5,12 +5,12 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import pt.flawless.fAuth.Main;
 import pt.flawless.fAuth.database.AuthDatabaseImpl;
-import pt.flawless.fAuth.events.PlayerAuthEvent.PlayerAuthEventImpl;
 import pt.flawless.fAuth.listeners.PlayerJoinListener;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
 import pt.flawless.fapi.actionbar.FActionBar;
+import pt.flawless.fapi.enums.FAuthType;
+import pt.flawless.fapi.events.PlayerAuthEvent.PlayerAuthEventImpl;
 import pt.flawless.fapi.sounds.FSound;
 
 import java.sql.SQLException;
@@ -46,11 +46,13 @@ public class RegisterCommand implements CommandExecutor {
                 AuthDatabaseImpl.database.registerUser(player.getUniqueId(), player.getName(), confirmPassword);
 
                 LoggedUsersImpl.loggedUsers.addLoggedUser(player.getUniqueId());
-                if (PlayerJoinListener.titleAlert != null) PlayerJoinListener.titleAlert.clear();
+                if (PlayerJoinListener.authTitleAlert != null) PlayerJoinListener.authTitleAlert.clear();
                 actionBar.setMessage("§eRegistado com sucesso!").send();
-                Bukkit.getConsoleSender().sendMessage("[fAuth] Registered user %username%.".replace("%username%", player.getName()));
                 FSound.success(player);
-                PlayerAuthEventImpl.callPlayerAuthEvent(player);
+                PlayerAuthEventImpl.callPlayerAuthEvent(player, FAuthType.REGISTRATION);
+
+                // TODO: Improve log registry system
+                Bukkit.getConsoleSender().sendMessage("[fAuth] Registered user %username%.".replace("%username%", player.getName()));
             } catch (SQLException e) {
                 player.kickPlayer("§cErro ao efetuar registo. Tenta novamente!");
                 FSound.fail(player);
