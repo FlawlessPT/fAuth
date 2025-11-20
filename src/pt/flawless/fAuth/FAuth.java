@@ -5,34 +5,32 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import pt.flawless.fAuth.commands.LoginCommand;
 import pt.flawless.fAuth.commands.RegisterCommand;
-import pt.flawless.fAuth.database.AuthDatabase;
 import pt.flawless.fAuth.database.AuthDatabaseImpl;
 import pt.flawless.fAuth.listeners.*;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
 import pt.flawless.fapi.logs.FConsoleLogger;
 
-import java.sql.SQLException;
-
-public class Main extends JavaPlugin {
+public class FAuth extends JavaPlugin {
     private static Plugin plugin;
+    FConsoleLogger consoleLogger = new FConsoleLogger(this.getName());
 
     @Override
     public void onEnable() {
-        this.plugin = this;
+        plugin = this;
+
+        consoleLogger.sendEnablePluginMessage();
 
         AuthDatabaseImpl.init();
 
         registerCommands();
         registerEvents();
-
-        FConsoleLogger.sendEnablePlugin(plugin.getName());
     }
 
     @Override
     public void onDisable() {
-        LoggedUsersImpl.loggedUsers.clearLoggedUsers();
+        //consoleLogger.sendDisablePluginMessage();
 
-        FConsoleLogger.sendDisablePlugin(plugin.getName());
+        LoggedUsersImpl.loggedUsers.clearLoggedUsers();
     }
 
     private void registerCommands() {
