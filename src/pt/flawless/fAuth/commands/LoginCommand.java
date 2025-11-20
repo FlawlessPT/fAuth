@@ -8,7 +8,7 @@ import pt.flawless.fAuth.database.AuthDatabaseImpl;
 import pt.flawless.fAuth.listeners.PlayerJoinListener;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
 import pt.flawless.fAuth.managers.PostLoginManager;
-import pt.flawless.fAuth.utils.AuthorizedUsers;
+import pt.flawless.fAuth.managers.AuthorizedUsers;
 import pt.flawless.fapi.actionbar.FActionBar;
 import pt.flawless.fapi.sounds.FSound;
 

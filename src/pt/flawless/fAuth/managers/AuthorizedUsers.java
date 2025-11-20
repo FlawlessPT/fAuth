@@ -1,4 +1,4 @@
-package pt.flawless.fAuth.utils;
+package pt.flawless.fAuth.managers;
 
 import java.util.HashSet;
 import java.util.Map;

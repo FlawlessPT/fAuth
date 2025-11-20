@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
 import pt.flawless.fAuth.managers.PostLoginManager;
-import pt.flawless.fAuth.utils.AuthorizedUsers;
+import pt.flawless.fAuth.managers.AuthorizedUsers;
 import pt.flawless.fapi.sounds.FSound;
 
 public class PlayerChatListener implements Listener {

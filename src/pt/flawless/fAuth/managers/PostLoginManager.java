@@ -3,7 +3,6 @@ package pt.flawless.fAuth.managers;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import pt.flawless.fAuth.listeners.PlayerJoinListener;
-import pt.flawless.fAuth.utils.AuthorizedUsers;
 import pt.flawless.fapi.actionbar.FActionBar;
 import pt.flawless.fapi.enums.FAuthType;
 import pt.flawless.fapi.events.PlayerAuthEvent.PlayerAuthEventImpl;

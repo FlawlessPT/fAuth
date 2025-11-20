@@ -8,7 +8,7 @@ import pt.flawless.fAuth.commands.RegisterCommand;
 import pt.flawless.fAuth.database.AuthDatabaseImpl;
 import pt.flawless.fAuth.listeners.*;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
-import pt.flawless.fAuth.utils.AuthorizedUsers;
+import pt.flawless.fAuth.managers.AuthorizedUsers;
 import pt.flawless.fapi.logs.FConsoleLogger;
 
 public class FAuth extends JavaPlugin {
