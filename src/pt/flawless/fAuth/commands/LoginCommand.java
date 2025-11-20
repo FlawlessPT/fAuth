@@ -1,6 +1,5 @@
 package pt.flawless.fAuth.commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -8,9 +7,9 @@ import org.bukkit.entity.Player;
 import pt.flawless.fAuth.database.AuthDatabaseImpl;
 import pt.flawless.fAuth.listeners.PlayerJoinListener;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
+import pt.flawless.fAuth.managers.PostLoginManager;
+import pt.flawless.fAuth.utils.AuthorizedUsers;
 import pt.flawless.fapi.actionbar.FActionBar;
-import pt.flawless.fapi.enums.FAuthType;
-import pt.flawless.fapi.events.PlayerAuthEvent.PlayerAuthEventImpl;
 import pt.flawless.fapi.sounds.FSound;
 
 import java.sql.SQLException;
@@ -20,7 +19,7 @@ public class LoginCommand implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
         Player player = (Player) commandSender;
 
-        if (args.length == 0 || args.length > 1) {
+        if (args.length != 1) {
             player.sendMessage("§cArgumentos em falta: /login [password]");
             FSound.fail(player);
         }
@@ -37,16 +36,21 @@ public class LoginCommand implements CommandExecutor {
 
             try {
                 String password = args[0];
-                Boolean isCorrectPassword = AuthDatabaseImpl.database.verifyPassword(player.getUniqueId(), password);
+                boolean isCorrectPassword = AuthDatabaseImpl.database.verifyPassword(player.getUniqueId(), password);
 
                 if (isCorrectPassword) {
-                    LoggedUsersImpl.loggedUsers.addLoggedUser(player.getUniqueId());
+                    // Handle 2FA authentication
+                    if (AuthorizedUsers.isUserAuthorized(player.getName())) {
+                        PlayerJoinListener.authTitleAlert.clear();
+                        PlayerJoinListener.authTitleAlert.setMessage("§eAdmin detetado. Por favor insere o teu código 2FA:");
+                        PlayerJoinListener.authTitleAlert.send();
 
-                    actionBar.setMessage("§eLogado com sucesso!").send();
-                    if (PlayerJoinListener.authTitleAlert != null) PlayerJoinListener.authTitleAlert.clear();
-                    Bukkit.getConsoleSender().sendMessage("[fAuth] %username% just logged in.".replace("%username%", player.getName()));
-                    FSound.success(player);
-                    PlayerAuthEventImpl.callPlayerAuthEvent(player, FAuthType.LOGIN);
+                        AuthorizedUsers.addPlayerToWaitingFor2FA(player.getUniqueId());
+
+                        return false;
+                    }
+
+                    PostLoginManager.proceedAuthentication(player);
                 } else {
                     actionBar.setMessage("§cPassword errada.").send();
                     FSound.fail(player);
