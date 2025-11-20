@@ -10,9 +10,8 @@ import pt.flawless.fAuth.listeners.*;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
 import pt.flawless.fapi.logs.FConsoleLogger;
 
-public class Main extends JavaPlugin {
+public class FAuth extends JavaPlugin {
     private static Plugin plugin;
-    // TODO: This line is breaking the plugin init for some reason
     FConsoleLogger consoleLogger = new FConsoleLogger(this.getName());
 
     @Override
@@ -29,7 +28,7 @@ public class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        consoleLogger.sendDisablePluginMessage();
+        //consoleLogger.sendDisablePluginMessage();
 
         LoggedUsersImpl.loggedUsers.clearLoggedUsers();
     }

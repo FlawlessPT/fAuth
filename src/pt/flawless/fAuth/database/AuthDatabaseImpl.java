@@ -1,7 +1,7 @@
 package pt.flawless.fAuth.database;
 
 import org.bukkit.Bukkit;
-import pt.flawless.fAuth.Main;
+import pt.flawless.fAuth.FAuth;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -10,7 +10,7 @@ public class AuthDatabaseImpl {
     public static AuthDatabase database;
 
     public static void init() {
-        File dataFolder = Main.getMainPlugin().getDataFolder();
+        File dataFolder = FAuth.getMainPlugin().getDataFolder();
 
         if (!dataFolder.exists()) {
             dataFolder.mkdirs();
