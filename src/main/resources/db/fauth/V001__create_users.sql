@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS fauth_users (
+    uuid CHAR(36) CHARACTER SET ascii NOT NULL,
+    username VARCHAR(16) NOT NULL,
+    password_hash CHAR(60) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (uuid)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
