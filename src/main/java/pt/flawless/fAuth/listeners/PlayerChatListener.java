@@ -37,7 +37,7 @@ public class PlayerChatListener implements Listener {
                 // O código 2FA nunca é comparado para quem não está à espera dele.
                 event.setCancelled(true);
                 MainThread.run(plugin, () -> {
-                    if (!player.isOnline()) {
+                    if (!MainThread.isSameSession(player)) {
                         return;
                     }
                     player.sendMessage("§cEfetua login primeiro: /login [password]");
@@ -48,7 +48,7 @@ public class PlayerChatListener implements Listener {
                 event.setCancelled(true);
                 boolean correct = AuthorizedUsers.matchesCode(player.getName(), event.getMessage());
                 MainThread.run(plugin, () -> {
-                    if (!player.isOnline()) {
+                    if (!MainThread.isSameSession(player)) {
                         return;
                     }
                     if (correct) {
