@@ -23,3 +23,10 @@ Feito na parte 4 (16/10/2026): migração para o MySQL (`AuthRepository` + `Auth
 
 ## Qualidade
 - [ ] O `auth.db` antigo continua em `plugins/fAuth/` no servidor de testes, sem uso.
+
+## Notas da revisão final (16/10/2026)
+- [ ] Bloquear comandos antes do login (`PlayerCommandPreprocessEvent`), incluindo o admin que já passou a password mas ainda não o código 2FA (hoje pode correr `/gamemode`, `/tp`, etc.).
+- [ ] A fila do executor de BCrypt não tem limite: um jogador a repetir `/login` atrasa os outros. Limitar pedidos em curso por UUID.
+- [ ] Limpeza: `AuthorizedUsers.getCode` sem uso; teste `ChatGateTest` duplicado (`adminNotLoggedInNotWaiting...` = `notLoggedInNotWaiting...`); import `java.util.Set` sem uso em `LoggedUsersImpl`; `/register` repetido mostra "já registado" a quem já está logado.
+- [ ] Se o arranque falhar depois de `setExecutor`, os comandos ficam registados (inofensivo: todos os logins são recusados).
+- [ ] Os plugins fServerCore, fShop e fUtilities ainda têm `compileOnly("org.xerial:sqlite-jdbc:...")` no `build.gradle.kts`, sem uso.
