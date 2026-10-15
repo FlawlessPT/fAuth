@@ -1,6 +1,7 @@
 package pt.flawless.fAuth;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import pt.flawless.fAuth.commands.LoginCommand;
 import pt.flawless.fAuth.commands.RegisterCommand;
@@ -59,6 +60,7 @@ public class FAuth extends JavaPlugin {
                 hashExecutor = null;
             }
             // Fail-closed: ninguém entra enquanto a autenticação estiver indisponível.
+            HandlerList.unregisterAll(this);
             Bukkit.getPluginManager().registerEvents(new AuthUnavailableListener(), this);
         }
     }

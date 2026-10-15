@@ -54,13 +54,13 @@ public class LoginCommand implements CommandExecutor {
                     if (error != null) {
                         FConsoleLogger.sendConsoleMessage("falha no login de " + player.getName() + ": "
                                 + Failures.unwrap(error), EMessageTypeEnum.ERROR);
-                        if (player.isOnline()) {
+                        if (MainThread.isSameSession(player)) {
                             FSound.fail(player);
                             player.kickPlayer("§cErro ao efetuar login. Tenta novamente!");
                         }
                         return;
                     }
-                    if (!player.isOnline()) {
+                    if (!MainThread.isSameSession(player)) {
                         return;
                     }
                     if (!correct) {

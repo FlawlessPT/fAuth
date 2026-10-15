@@ -33,6 +33,9 @@ public class PostLoginManager {
 
     /** Só na thread principal. */
     public static void completeRegistration(Player player) {
+        if (LoggedUsersImpl.loggedUsers.isLoggedIn(player.getUniqueId())) {
+            return;
+        }
         LoggedUsersImpl.loggedUsers.addLoggedUser(player.getUniqueId());
         AuthTitles.titles.clear(player);
 

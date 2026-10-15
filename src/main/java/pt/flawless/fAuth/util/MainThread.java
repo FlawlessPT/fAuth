@@ -1,6 +1,7 @@
 package pt.flawless.fAuth.util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import pt.flawless.fapi.enums.EMessageTypeEnum;
 import pt.flawless.fapi.logs.FConsoleLogger;
@@ -15,6 +16,14 @@ import pt.flawless.fapi.logs.FConsoleLogger;
 public final class MainThread {
 
     private MainThread() {
+    }
+
+    /**
+     * Verdadeiro se {@code player} ainda é a sessão viva deste UUID (e não uma nova sessão do
+     * mesmo jogador). Só na thread principal.
+     */
+    public static boolean isSameSession(Player player) {
+        return Bukkit.getPlayer(player.getUniqueId()) == player;
     }
 
     /**

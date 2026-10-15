@@ -60,7 +60,7 @@ public class RegisterCommand implements CommandExecutor {
                         FConsoleLogger.sendConsoleMessage("falha no registo de " + player.getName() + ": "
                                 + cause, EMessageTypeEnum.ERROR);
                     }
-                    if (!player.isOnline()) {
+                    if (!MainThread.isSameSession(player)) {
                         return;
                     }
                     if (cause == null) {

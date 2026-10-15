@@ -6,6 +6,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import pt.flawless.fAuth.managers.AuthTitles;
+import pt.flawless.fAuth.managers.AuthorizedUsers;
+import pt.flawless.fAuth.managers.LoggedUsersImpl;
 import pt.flawless.fAuth.services.AuthService;
 import pt.flawless.fAuth.util.Failures;
 import pt.flawless.fAuth.util.MainThread;
@@ -29,13 +31,17 @@ public class PlayerJoinListener implements Listener {
 
         service.isRegistered(player.getUniqueId()).whenComplete((registered, error) ->
                 MainThread.run(plugin, () -> {
-                    if (!player.isOnline()) {
+                    if (!MainThread.isSameSession(player)) {
                         return;
                     }
                     if (error != null) {
                         FConsoleLogger.sendConsoleMessage("falha ao validar o estado do login de "
                                 + player.getName() + ": " + Failures.unwrap(error), EMessageTypeEnum.ERROR);
                         player.kickPlayer("§cErro ao validar o estado do teu login.");
+                        return;
+                    }
+                    if (LoggedUsersImpl.loggedUsers.isLoggedIn(player.getUniqueId())
+                            || AuthorizedUsers.isPlayerWaiting2FA(player.getUniqueId())) {
                         return;
                     }
                     if (registered) {
