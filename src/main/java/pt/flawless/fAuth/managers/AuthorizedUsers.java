@@ -1,19 +1,24 @@
 package pt.flawless.fAuth.managers;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AuthorizedUsers {
     public static final Map<String, String> ADMIN_CODES = Map.of(
             "FlawlessYasuo", "1234"
     );
 
-    public static final Set<UUID> waitingFor2FA = new HashSet<>();
+    public static final Set<UUID> waitingFor2FA = ConcurrentHashMap.newKeySet();
 
     public static String getCode(String playerName) {
         return ADMIN_CODES.get(playerName);
+    }
+
+    public static boolean matchesCode(String playerName, String message) {
+        String code = ADMIN_CODES.get(playerName);
+        return code != null && message != null && code.equalsIgnoreCase(message);
     }
 
     public static boolean isUserAuthorized(String playerName) {
