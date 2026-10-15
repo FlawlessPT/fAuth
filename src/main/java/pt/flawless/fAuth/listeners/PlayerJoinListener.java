@@ -4,37 +4,45 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import pt.flawless.fAuth.database.AuthDatabaseImpl;
-import pt.flawless.fapi.title.FTitle;
-
-import java.sql.SQLException;
+import org.bukkit.plugin.Plugin;
+import pt.flawless.fAuth.managers.AuthTitles;
+import pt.flawless.fAuth.services.AuthService;
+import pt.flawless.fAuth.util.Failures;
+import pt.flawless.fAuth.util.MainThread;
+import pt.flawless.fapi.enums.EMessageTypeEnum;
+import pt.flawless.fapi.logs.FConsoleLogger;
 
 // TODO: Move this file to centralized place
 public class PlayerJoinListener implements Listener {
-    public static FTitle authTitleAlert;
+
+    private final AuthService service;
+    private final Plugin plugin;
+
+    public PlayerJoinListener(AuthService service, Plugin plugin) {
+        this.service = service;
+        this.plugin = plugin;
+    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         Player player = e.getPlayer();
-        
-        try {
-            Boolean isRegistered = AuthDatabaseImpl.database.isRegistered(player.getUniqueId());
 
-            authTitleAlert = new FTitle().setPlayer(player).setTime(999);
-            String message;
-
-            if (isRegistered) {
-                message = "§cPara prosseguir, efetua login: /login [password]§c ";
-                authTitleAlert.setMessage(message);
-            } else {
-                message = "§cPara prosseguir, regista-te: /register [password] [password]§c ";
-                authTitleAlert.setMessage(message);
-            }
-
-            //player.sendMessage(message);
-            authTitleAlert.send();
-        } catch (SQLException ex) {
-            player.kickPlayer("§cErro ao validar o estado do teu login.");
-        }
+        service.isRegistered(player.getUniqueId()).whenComplete((registered, error) ->
+                MainThread.run(plugin, () -> {
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    if (error != null) {
+                        FConsoleLogger.sendConsoleMessage("falha ao validar o estado do login de "
+                                + player.getName() + ": " + Failures.unwrap(error), EMessageTypeEnum.ERROR);
+                        player.kickPlayer("§cErro ao validar o estado do teu login.");
+                        return;
+                    }
+                    if (registered) {
+                        AuthTitles.titles.showLogin(player);
+                    } else {
+                        AuthTitles.titles.showRegister(player);
+                    }
+                }));
     }
 }

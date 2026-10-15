@@ -2,7 +2,7 @@ name: fAuth
 main: pt.flawless.fAuth.FAuth
 description: Server auth
 version: 1.0
-depend: [fAPI]
+depend: [fAPI, fDatabase]
 commands:
   login:
     description: Login into a player's account

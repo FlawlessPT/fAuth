@@ -1,63 +1,78 @@
 package pt.flawless.fAuth.commands;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import pt.flawless.fAuth.database.AuthDatabaseImpl;
-import pt.flawless.fAuth.listeners.PlayerJoinListener;
+import org.bukkit.plugin.Plugin;
+import pt.flawless.fAuth.exceptions.UserAlreadyRegisteredException;
 import pt.flawless.fAuth.managers.LoggedUsersImpl;
+import pt.flawless.fAuth.managers.PostLoginManager;
+import pt.flawless.fAuth.services.AuthService;
+import pt.flawless.fAuth.util.Failures;
+import pt.flawless.fAuth.util.MainThread;
 import pt.flawless.fapi.actionbar.FActionBar;
-import pt.flawless.fapi.enums.FAuthType;
-import pt.flawless.fapi.events.PlayerAuthEvent.PlayerAuthEventImpl;
+import pt.flawless.fapi.enums.EMessageTypeEnum;
+import pt.flawless.fapi.logs.FConsoleLogger;
 import pt.flawless.fapi.sounds.FSound;
 
-import java.sql.SQLException;
-
 public class RegisterCommand implements CommandExecutor {
-    @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] args) {
-        Player player = (Player) commandSender;
 
-        if (args.length == 0 || args.length == 1 || args.length > 2) {
+    private final AuthService service;
+    private final Plugin plugin;
+
+    public RegisterCommand(AuthService service, Plugin plugin) {
+        this.service = service;
+        this.plugin = plugin;
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (!(sender instanceof Player player)) {
+            sender.sendMessage("§cApenas jogadores podem usar este comando.");
+            return true;
+        }
+
+        if (args.length != 2) {
             player.sendMessage("§cArgumentos em falta: /register [password] [confirm_password]");
             FSound.fail(player);
+            return true;
         }
 
-        if (args.length == 2) {
-            FActionBar actionBar = new FActionBar(player);
-            String password = args[0];
-            String confirmPassword = args[1];
-
-            if (!password.equalsIgnoreCase(confirmPassword)) {
-                actionBar.setMessage("§cAs passwords devem corresponder!").send();
-                FSound.fail(player);
-                return false;
-            }
-
-            try {
-                if (AuthDatabaseImpl.database.isRegistered(player.getUniqueId())) {
-                    actionBar.setMessage("§cUtilizador já registado!").send();
-                    FSound.fail(player);
-                    return false;
-                }
-
-                AuthDatabaseImpl.database.registerUser(player.getUniqueId(), player.getName(), confirmPassword);
-
-                LoggedUsersImpl.loggedUsers.addLoggedUser(player.getUniqueId());
-                if (PlayerJoinListener.authTitleAlert != null) PlayerJoinListener.authTitleAlert.clear();
-                actionBar.setMessage("§eRegistado com sucesso!").send();
-                FSound.success(player);
-                PlayerAuthEventImpl.callPlayerAuthEvent(player, FAuthType.REGISTRATION);
-
-                // TODO: Improve log registry system
-                Bukkit.getConsoleSender().sendMessage("[fAuth] Registered user %username%.".replace("%username%", player.getName()));
-            } catch (SQLException e) {
-                player.kickPlayer("§cErro ao efetuar registo. Tenta novamente!");
-                FSound.fail(player);
-            }
+        // Antes de calcular qualquer hash.
+        if (LoggedUsersImpl.loggedUsers.isLoggedIn(player.getUniqueId())) {
+            new FActionBar(player).setMessage("§cJá te encontras logado!").send();
+            FSound.fail(player);
+            return true;
         }
-        return false;
+
+        String password = args[0];
+        if (!password.equals(args[1])) {
+            new FActionBar(player).setMessage("§cAs passwords devem corresponder!").send();
+            FSound.fail(player);
+            return true;
+        }
+
+        service.register(player.getUniqueId(), player.getName(), password).whenComplete((ignored, error) ->
+                MainThread.run(plugin, () -> {
+                    Throwable cause = error == null ? null : Failures.unwrap(error);
+                    if (cause != null && !(cause instanceof UserAlreadyRegisteredException)) {
+                        FConsoleLogger.sendConsoleMessage("falha no registo de " + player.getName() + ": "
+                                + cause, EMessageTypeEnum.ERROR);
+                    }
+                    if (!player.isOnline()) {
+                        return;
+                    }
+                    if (cause == null) {
+                        PostLoginManager.completeRegistration(player);
+                    } else if (cause instanceof UserAlreadyRegisteredException) {
+                        new FActionBar(player).setMessage("§cUtilizador já registado!").send();
+                        FSound.fail(player);
+                    } else {
+                        FSound.fail(player);
+                        player.kickPlayer("§cErro ao efetuar registo. Tenta novamente!");
+                    }
+                }));
+        return true;
     }
 }

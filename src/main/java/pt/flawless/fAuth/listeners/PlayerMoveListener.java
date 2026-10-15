@@ -8,7 +8,7 @@ import pt.flawless.fAuth.managers.LoggedUsersImpl;
 public class PlayerMoveListener implements Listener {
     @EventHandler
     public void onPlayerMoveEvent(PlayerMoveEvent e) {
-        if (LoggedUsersImpl.loggedUsers.getLoggedInPlayers().contains(e.getPlayer().getUniqueId())) {
+        if (LoggedUsersImpl.loggedUsers.isLoggedIn(e.getPlayer().getUniqueId())) {
             return;
         }
 
