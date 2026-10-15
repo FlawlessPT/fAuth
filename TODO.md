@@ -8,7 +8,7 @@ Pendências conhecidas deste plugin (15/10/2026). Riscar quando feito.
 - [ ] Corrigir os defeitos conhecidos:
   - `/register` compara as passwords com `equalsIgnoreCase` (deve ser `equals`);
   - `PlayerJoinListener.authTitleAlert` é estático e partilhado entre todos os jogadores;
-  - `/login` e `/register` fazem cast direto para `Player` (rebenta na consola) e, com argumentos errados, continuam a correr;
+  - `/login` e `/register` fazem cast direto para `Player` (rebenta na consola) e devolvem sempre `false` (o Bukkit mostra o uso por cima da mensagem própria);
   - o evento de LOGIN do 2FA é disparado na thread assíncrona do chat (quem ouvir o evento e usar a API Bukkit tem de passar para a thread principal);
   - o 2FA dispensa a password: um admin que ainda não fez login e escreve o código no chat fica autenticado (`PlayerChatListener`).
 
