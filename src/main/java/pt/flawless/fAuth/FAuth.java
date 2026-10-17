@@ -30,6 +30,7 @@ public class FAuth extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        saveDefaultConfig();
         try {
             DatabaseService database = Databases.get();
             database.migrate(this, List.of("db/fauth/V001__create_users.sql"));
@@ -43,6 +44,7 @@ public class FAuth extends JavaPlugin {
 
             Bukkit.getPluginManager().registerEvents(new PlayerChatListener(this), this);
             Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), this);
+            Bukkit.getPluginManager().registerEvents(new PlayerCommandListener(), this);
             Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
             Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(), this);
             Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(service, this), this);

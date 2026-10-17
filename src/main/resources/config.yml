@@ -1,0 +1,9 @@
+Mensagens:
+  # Enviada no chat depois do login/registo. Usa & para cores; {player} é o nome do jogador.
+  BemVindo:
+    - " "
+    - "&eBem vindo ao servidor!"
+    - "&eSe tiveres dúvidas contacta a nossa &fSTAFF&f."
+    - " "
+    - "&eDesejámos-te um bom jogo!"
+    - " "
