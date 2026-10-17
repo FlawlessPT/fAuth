@@ -140,6 +140,28 @@ class AuthRepositoryIT {
     }
 
     @Test
+    void setRemember_thenFindRemember() throws Exception {
+        UUID id = UUID.randomUUID();
+        await(repo.register(id, "Alice", HASH_A));
+        await(repo.setRemember(id, "1.2.3.4", 1_700_000_000_000L));
+        assertEquals(Optional.of(new RememberedSession("1.2.3.4", 1_700_000_000_000L)), await(repo.findRemember(id)));
+    }
+
+    @Test
+    void clearRemember_findRememberEmpty() throws Exception {
+        UUID id = UUID.randomUUID();
+        await(repo.register(id, "Alice", HASH_A));
+        await(repo.setRemember(id, "1.2.3.4", 1_700_000_000_000L));
+        await(repo.clearRemember(id));
+        assertEquals(Optional.empty(), await(repo.findRemember(id)));
+    }
+
+    @Test
+    void findRemember_unknownUuid_empty() throws Exception {
+        assertEquals(Optional.empty(), await(repo.findRemember(UUID.randomUUID())));
+    }
+
+    @Test
     void registeredHashFitsColumn() throws Exception {
         UUID id = UUID.randomUUID();
         String hash = BCrypt.hashpw("segredo", BCrypt.gensalt(12));

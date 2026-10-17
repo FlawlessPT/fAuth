@@ -62,6 +62,34 @@ public class AuthService {
         }
     }
 
+    /** Lembra o login deste IP até {@code untilMillis} (epoch ms). */
+    public CompletableFuture<Void> enableRemember(UUID uuid, String ip, long untilMillis) {
+        try {
+            return repository.setRemember(uuid, ip, untilMillis);
+        } catch (RuntimeException e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+    /** Esquece a sessão lembrada. */
+    public CompletableFuture<Void> disableRemember(UUID uuid) {
+        try {
+            return repository.clearRemember(uuid);
+        } catch (RuntimeException e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
+    /** @return se há sessão lembrada válida para este IP; falha (nunca {@code true}) se a BD falhar */
+    public CompletableFuture<Boolean> hasValidSession(UUID uuid, String ip, long nowMillis) {
+        try {
+            return repository.findRemember(uuid)
+                    .thenApply(o -> o.map(s -> s.isValidFor(ip, nowMillis)).orElse(false));
+        } catch (RuntimeException e) {
+            return CompletableFuture.failedFuture(e);
+        }
+    }
+
     private CompletableFuture<Boolean> check(Optional<String> stored, String plainPassword) {
         if (!stored.isPresent()) {
             return CompletableFuture.completedFuture(false);

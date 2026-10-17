@@ -32,27 +32,26 @@ public final class TestDb {
                 System.getenv("FLAWLESS_DB_PASSWORD"));
     }
 
-    /** Apaga so fauth_users (nunca schema_version) e recria-a com o ficheiro V001. */
+    /** Apaga so fauth_users (nunca schema_version) e recria-a com os ficheiros V001 e V002. */
     public static void resetSchema(DatabaseService database) throws Exception {
-        String ddl = readMigration().trim();
-        if (ddl.endsWith(";")) {
-            ddl = ddl.substring(0, ddl.length() - 1);
-        }
-        String create = ddl;
+        String[] ddl = {readMigration("V001__create_users.sql"), readMigration("V002__remember_session.sql")};
         database.runAsync(connection -> {
             try (Statement st = connection.createStatement()) {
                 st.execute("DROP TABLE IF EXISTS fauth_users");
-                st.execute(create);
+                for (String sql : ddl) {
+                    st.execute(sql);
+                }
             }
         }).get(30, TimeUnit.SECONDS);
     }
 
-    private static String readMigration() {
-        try (InputStream in = TestDb.class.getResourceAsStream("/db/fauth/V001__create_users.sql")) {
+    private static String readMigration(String name) {
+        try (InputStream in = TestDb.class.getResourceAsStream("/db/fauth/" + name)) {
             if (in == null) {
-                throw new IllegalStateException("V001 nao encontrado no classpath");
+                throw new IllegalStateException(name + " nao encontrado no classpath");
             }
-            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+            String ddl = new String(in.readAllBytes(), StandardCharsets.UTF_8).trim();
+            return ddl.endsWith(";") ? ddl.substring(0, ddl.length() - 1) : ddl;
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

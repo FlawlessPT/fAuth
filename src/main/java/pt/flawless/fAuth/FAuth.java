@@ -33,7 +33,7 @@ public class FAuth extends JavaPlugin {
         saveDefaultConfig();
         try {
             DatabaseService database = Databases.get();
-            database.migrate(this, List.of("db/fauth/V001__create_users.sql"));
+            database.migrate(this, List.of("db/fauth/V001__create_users.sql", "db/fauth/V002__remember_session.sql"));
 
             AuthRepository repository = new AuthRepository(database);
             hashExecutor = AuthExecutors.newHashExecutor();

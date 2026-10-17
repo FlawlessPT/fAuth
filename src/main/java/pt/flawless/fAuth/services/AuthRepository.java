@@ -31,6 +31,13 @@ public class AuthRepository {
     private static final String REGISTER =
             "INSERT INTO fauth_users (uuid, username, password_hash) VALUES (?, ?, ?)";
 
+    private static final String SET_REMEMBER =
+            "UPDATE fauth_users SET remember_ip = ?, remember_until = ? WHERE uuid = ?";
+    private static final String CLEAR_REMEMBER =
+            "UPDATE fauth_users SET remember_ip = NULL, remember_until = NULL WHERE uuid = ?";
+    private static final String FIND_REMEMBER =
+            "SELECT remember_ip, remember_until FROM fauth_users WHERE uuid = ?";
+
     private final DatabaseService database;
 
     public AuthRepository(DatabaseService database) {
@@ -60,6 +67,50 @@ public class AuthRepository {
                 ps.setString(1, uuid.toString());
                 try (ResultSet rs = ps.executeQuery()) {
                     return rs.next() ? Optional.of(rs.getString(1)) : Optional.<String>empty();
+                }
+            }
+        });
+    }
+
+    /** Guarda a sessão lembrada (IP e prazo em epoch ms); falha com {@link SQLException} em erro de BD. */
+    public CompletableFuture<Void> setRemember(UUID uuid, String ip, long untilMillis) {
+        return database.runAsync(connection -> {
+            try (PreparedStatement ps = connection.prepareStatement(SET_REMEMBER)) {
+                ps.setString(1, ip);
+                ps.setLong(2, untilMillis);
+                ps.setString(3, uuid.toString());
+                ps.executeUpdate();
+            }
+        });
+    }
+
+    /** Apaga a sessão lembrada. */
+    public CompletableFuture<Void> clearRemember(UUID uuid) {
+        return database.runAsync(connection -> {
+            try (PreparedStatement ps = connection.prepareStatement(CLEAR_REMEMBER)) {
+                ps.setString(1, uuid.toString());
+                ps.executeUpdate();
+            }
+        });
+    }
+
+    /**
+     * @return a sessão lembrada, ou vazio se o UUID não existe ou as colunas são NULL; falha com
+     * {@link SQLException}
+     */
+    public CompletableFuture<Optional<RememberedSession>> findRemember(UUID uuid) {
+        return database.supplyAsync(connection -> {
+            try (PreparedStatement ps = connection.prepareStatement(FIND_REMEMBER)) {
+                ps.setString(1, uuid.toString());
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        return Optional.<RememberedSession>empty();
+                    }
+                    String ip = rs.getString(1);
+                    long until = rs.getLong(2);
+                    return ip == null || rs.wasNull()
+                            ? Optional.<RememberedSession>empty()
+                            : Optional.of(new RememberedSession(ip, until));
                 }
             }
         });

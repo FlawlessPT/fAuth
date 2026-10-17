@@ -42,6 +42,12 @@ class AuthServiceTest {
         final List<String> calls = Collections.synchronizedList(new ArrayList<>());
         volatile String lastHashReceived;
         volatile Thread registerThread;
+        Optional<RememberedSession> remember = Optional.empty();
+        CompletableFuture<Optional<RememberedSession>> rememberFailed;
+        UUID setUuid;
+        String setIp;
+        long setUntil;
+        UUID clearedUuid;
 
         InMemoryAuthRepository() {
             super(null);
@@ -57,6 +63,28 @@ class AuthServiceTest {
         public CompletableFuture<Optional<String>> findPasswordHash(UUID uuid) {
             calls.add("findPasswordHash");
             return CompletableFuture.completedFuture(Optional.ofNullable(hashes.get(uuid)));
+        }
+
+        @Override
+        public CompletableFuture<Optional<RememberedSession>> findRemember(UUID uuid) {
+            if (rememberFailed != null) {
+                return rememberFailed;
+            }
+            return CompletableFuture.completedFuture(remember);
+        }
+
+        @Override
+        public CompletableFuture<Void> setRemember(UUID uuid, String ip, long untilMillis) {
+            setUuid = uuid;
+            setIp = ip;
+            setUntil = untilMillis;
+            return CompletableFuture.completedFuture(null);
+        }
+
+        @Override
+        public CompletableFuture<Void> clearRemember(UUID uuid) {
+            clearedUuid = uuid;
+            return CompletableFuture.completedFuture(null);
         }
 
         @Override
@@ -213,6 +241,53 @@ class AuthServiceTest {
         } finally {
             executor.shutdownNow();
         }
+    }
+
+    @Test
+    void hasValidSession_validSession_true() throws Exception {
+        InMemoryAuthRepository repo = new InMemoryAuthRepository();
+        repo.remember = Optional.of(new RememberedSession("1.2.3.4", 2000));
+        assertTrue(new AuthService(repo, DIRECT).hasValidSession(UUID.randomUUID(), "1.2.3.4", 1000).get());
+    }
+
+    @Test
+    void hasValidSession_otherIp_false() throws Exception {
+        InMemoryAuthRepository repo = new InMemoryAuthRepository();
+        repo.remember = Optional.of(new RememberedSession("1.2.3.4", 2000));
+        assertFalse(new AuthService(repo, DIRECT).hasValidSession(UUID.randomUUID(), "5.6.7.8", 1000).get());
+    }
+
+    @Test
+    void hasValidSession_expired_false() throws Exception {
+        InMemoryAuthRepository repo = new InMemoryAuthRepository();
+        repo.remember = Optional.of(new RememberedSession("1.2.3.4", 2000));
+        assertFalse(new AuthService(repo, DIRECT).hasValidSession(UUID.randomUUID(), "1.2.3.4", 2000).get());
+    }
+
+    @Test
+    void hasValidSession_noSession_false() throws Exception {
+        InMemoryAuthRepository repo = new InMemoryAuthRepository();
+        assertFalse(new AuthService(repo, DIRECT).hasValidSession(UUID.randomUUID(), "1.2.3.4", 1000).get());
+    }
+
+    @Test
+    void hasValidSession_repositoryFails_failedFuture() {
+        InMemoryAuthRepository repo = new InMemoryAuthRepository();
+        repo.rememberFailed = CompletableFuture.failedFuture(new IllegalStateException("bd"));
+        assertTrue(new AuthService(repo, DIRECT).hasValidSession(UUID.randomUUID(), "1.2.3.4", 1).isCompletedExceptionally());
+    }
+
+    @Test
+    void enableAndDisableRemember_delegate() throws Exception {
+        InMemoryAuthRepository repo = new InMemoryAuthRepository();
+        AuthService service = new AuthService(repo, DIRECT);
+        UUID id = UUID.randomUUID();
+        service.enableRemember(id, "1.2.3.4", 99).get();
+        assertEquals(id, repo.setUuid);
+        assertEquals("1.2.3.4", repo.setIp);
+        assertEquals(99, repo.setUntil);
+        service.disableRemember(id).get();
+        assertEquals(id, repo.clearedUuid);
     }
 
     @Test
