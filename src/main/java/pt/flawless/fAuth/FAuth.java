@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.java.JavaPlugin;
 import pt.flawless.fAuth.commands.LoginCommand;
+import pt.flawless.fAuth.commands.ManterLoginCommand;
 import pt.flawless.fAuth.commands.RegisterCommand;
 import pt.flawless.fAuth.listeners.*;
 import pt.flawless.fAuth.managers.AuthTitles;
@@ -41,6 +42,7 @@ public class FAuth extends JavaPlugin {
 
             getCommand("login").setExecutor(new LoginCommand(service, this));
             getCommand("register").setExecutor(new RegisterCommand(service, this));
+            getCommand("manterlogin").setExecutor(new ManterLoginCommand(service, this));
 
             Bukkit.getPluginManager().registerEvents(new PlayerChatListener(this), this);
             Bukkit.getPluginManager().registerEvents(new PlayerMoveListener(), this);
@@ -48,7 +50,7 @@ public class FAuth extends JavaPlugin {
             Bukkit.getPluginManager().registerEvents(new PlayerQuitListener(), this);
             Bukkit.getPluginManager().registerEvents(new PlayerInteractListener(), this);
             Bukkit.getPluginManager().registerEvents(new PlayerJoinListener(service, this), this);
-            Bukkit.getPluginManager().registerEvents(new PlayerAuthListener(), this);
+            Bukkit.getPluginManager().registerEvents(new PlayerAuthListener(service, this), this);
 
             enabledOk = true;
             consoleLogger.sendEnablePluginMessage();

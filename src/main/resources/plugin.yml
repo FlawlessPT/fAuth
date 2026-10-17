@@ -12,3 +12,6 @@ commands:
     description: Register a player's account
     aliases:
       - registar
+  manterlogin:
+    description: Guarda a sessão neste IP durante alguns dias (volta a usar para desligar)
+    usage: "Uso: /manterlogin"

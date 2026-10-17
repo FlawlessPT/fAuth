@@ -7,3 +7,8 @@ Mensagens:
     - " "
     - "&eDesejámos-te um bom jogo!"
     - " "
+Sessao:
+  # Permite guardar a sessão (/manterlogin) para entrar sem password no mesmo IP.
+  Ativa: true
+  # Dias de validade da sessão guardada.
+  Dias: 7
