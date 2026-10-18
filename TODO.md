@@ -11,6 +11,7 @@ Feito na parte 4 (16/10/2026): migração para o MySQL (`AuthRepository` + `Auth
 - [ ] 2FA a sério (TOTP: código que muda a cada 30 segundos) em vez de um código fixo.
 - [ ] Um admin ainda não registado pode ser reclamado por quem registar esse nome primeiro.
 - [ ] Um admin que se regista entra sem passar pelo 2FA.
+- [ ] O inventário do player é carregado antes de ele fazer login.
 
 ## Fail-closed e `/reload`
 - [ ] O `/reload` não é suportado: os títulos ficam no ecrã depois do reload e o estado em memória perde-se.
