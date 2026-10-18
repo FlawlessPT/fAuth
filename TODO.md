@@ -11,7 +11,7 @@ Feito na parte 4 (16/10/2026): migração para o MySQL (`AuthRepository` + `Auth
 - [ ] 2FA a sério (TOTP: código que muda a cada 30 segundos) em vez de um código fixo.
 - [ ] Um admin ainda não registado pode ser reclamado por quem registar esse nome primeiro.
 - [ ] Um admin que se regista entra sem passar pelo 2FA.
-- [ ] O inventário do player é carregado antes de ele fazer login.
+- [ ] O inventário do player é carregado antes de ele fazer login. Adiado de propósito: com o BungeeCord o jogador entra sempre primeiro no hub, onde o inventário é fixo e igual para todos, por isso o problema deixa de existir. Se o fAuth voltar a correr sozinho, esconder o inventário só no cliente (pacote `WindowItems` vazio reenviado a cada 5 ticks enquanto não há login, `updateInventory()` ao autenticar; bloquear abrir, clicar, largar e apanhar).
 
 ## Fail-closed e `/reload`
 - [ ] O `/reload` não é suportado: os títulos ficam no ecrã depois do reload e o estado em memória perde-se.
@@ -26,7 +26,7 @@ Feito na parte 4 (16/10/2026): migração para o MySQL (`AuthRepository` + `Auth
 - [ ] O `auth.db` antigo continua em `plugins/fAuth/` no servidor de testes, sem uso.
 
 ## Notas da revisão final (16/10/2026)
-- [ ] Bloquear comandos antes do login (`PlayerCommandPreprocessEvent`), incluindo o admin que já passou a password mas ainda não o código 2FA (hoje pode correr `/gamemode`, `/tp`, etc.).
+- [x] Bloquear comandos antes do login (`PlayerCommandPreprocessEvent`), incluindo o admin que já passou a password mas ainda não o código 2FA (hoje pode correr `/gamemode`, `/tp`, etc.).
 - [ ] A fila do executor de BCrypt não tem limite: um jogador a repetir `/login` atrasa os outros. Limitar pedidos em curso por UUID.
 - [ ] Limpeza: `AuthorizedUsers.getCode` sem uso; teste `ChatGateTest` duplicado (`adminNotLoggedInNotWaiting...` = `notLoggedInNotWaiting...`); import `java.util.Set` sem uso em `LoggedUsersImpl`; `/register` repetido mostra "já registado" a quem já está logado.
 - [ ] Se o arranque falhar depois de `setExecutor`, os comandos ficam registados (inofensivo: todos os logins são recusados).
