@@ -1,5 +1,6 @@
 name: fAuth
 main: pt.flawless.fAuth.FAuth
+api-version: '1.21'
 description: Server auth
 version: 1.0
 depend: [fAPI, fDatabase]
